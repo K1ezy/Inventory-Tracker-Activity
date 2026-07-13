@@ -1,6 +1,6 @@
-// ==========================================
+
 // PART 1: Class, Instantiation, and Rendering
-// ==========================================
+
 
 // 1. Creating a blueprint which is a (Class) for the real-world object.
 class Keychain {
@@ -125,13 +125,13 @@ function editItem(index) {
         inventory[index].character = newChar;
         inventory[index].color = newColor;
         
-        // We use parseFloat to turn the price text back into a proper number
+        // It use parseFloat to turn the price text back into a proper number
         inventory[index].price = parseFloat(newPrice);
         
         // 6. Finally, This redraws the HTML list so the new changes appear on the screen instantly
         renderList();
     } else {
-        // Optional: Let them know the edit was cancelled
+        // Optional: Function to know the edit was cancelled
         alert("Edit cancelled. The item was not changed.");
     }
 }
