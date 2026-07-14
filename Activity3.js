@@ -1,6 +1,7 @@
-
 // PART 1: Class, Instantiation, and Rendering
 
+// A global tracker to keep track of which item index is currently being edited
+let editIndex = null;
 
 // 1. Creating a blueprint which is a (Class) for the real-world object.
 class Keychain {
@@ -53,9 +54,9 @@ function renderList() {
 renderList();
 
 
-// ==========================================
+
 // PART 2: Adding Items via Event Listeners
-// ==========================================
+
 
 // This function grabs the Add button from the HTML
 const addBtn = document.getElementById('addBtn');
@@ -73,11 +74,23 @@ addBtn.addEventListener('click', () => {
         return; 
     }
 
-    // Create a new Keychain object using the input values
-    const newItem = new Keychain(charValue, colorValue, parseFloat(priceValue));
-    
-    // This pushes to the array
-    inventory.push(newItem);
+    // Check if we are saving an edited item or introducing a new one
+    if (editIndex !== null) {
+        // Update the existing item properties in our array
+        inventory[editIndex].character = charValue;
+        inventory[editIndex].color = colorValue;
+        inventory[editIndex].price = parseFloat(priceValue);
+        
+        // Reset our state back to default add mode
+        editIndex = null;
+        addBtn.textContent = "Add to Inventory";
+    } else {
+        // Create a new Keychain object using the input values
+        const newItem = new Keychain(charValue, colorValue, parseFloat(priceValue));
+        
+        // This pushes to the array
+        inventory.push(newItem);
+    }
     
     // Re-renders the Domain Object Model (DOM) to show the updated array
     renderList();
@@ -89,12 +102,21 @@ addBtn.addEventListener('click', () => {
 });
 
 
-// ==========================================
+
 // PART 3: Delete and Edit Functionality
-// ==========================================
+
 
 // A function to delete an item based on its index in the array
 function deleteItem(index) {
+    // If we happen to delete the row currently loaded for editing, reset the form state
+    if (editIndex === index) {
+        editIndex = null;
+        addBtn.textContent = "Add to Inventory";
+        document.getElementById('charInput').value = '';
+        document.getElementById('colorInput').value = '';
+        document.getElementById('priceInput').value = '';
+    }
+
     // Array method .splice() removes items. (index to start at, how many to remove)
     inventory.splice(index, 1);
     
@@ -107,31 +129,14 @@ function editItem(index) {
     // 1. This function grabs the specific keychain we want to edit from the array
     const currentItem = inventory[index];
 
-    // 2. This Asks the user for the new character name. 
-    // The second part (currentItem.character) puts the existing name in the text box so they don't have to type it from scratch!
-    const newChar = prompt("Edit Character (e.g. Gengar):", currentItem.character);
-    
-    // 3. It Asks for the new color
-    const newColor = prompt("Edit Filament Color:", currentItem.color);
-    
-    // 4. Then it Asks for the new price
-    const newPrice = prompt("Edit Price (PHP):", currentItem.price);
+    // 2. Load the data directly up into the top text input values instead of using dialog prompts
+    document.getElementById('charInput').value = currentItem.character;
+    document.getElementById('colorInput').value = currentItem.color;
+    document.getElementById('priceInput').value = currentItem.price;
 
-    // 5. Safety Check: If the user hits "Cancel" on any prompt, the result is 'null'. 
-    // We only update the array if they actually filled out all three prompts.
-    if (newChar !== null && newColor !== null && newPrice !== null) {
-        
-        // Update the object in our array with the newly typed values
-        inventory[index].character = newChar;
-        inventory[index].color = newColor;
-        
-        // It use parseFloat to turn the price text back into a proper number
-        inventory[index].price = parseFloat(newPrice);
-        
-        // 6. Finally, This redraws the HTML list so the new changes appear on the screen instantly
-        renderList();
-    } else {
-        // Optional: Function to know the edit was cancelled
-        alert("Edit cancelled. The item was not changed.");
-    }
+    // 3. Keep track of the index position we are editing globally
+    editIndex = index;
+
+    // 4. Swap the text of the action button so the user knows clicking it triggers an update action
+    addBtn.textContent = "Update Item";
 }
