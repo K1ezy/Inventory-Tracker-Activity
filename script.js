@@ -103,7 +103,7 @@ addBtn.addEventListener('click', () => {
 
 
 
-// PART 3: Delete and Edit Functionality
+// PART 3: The Delete and Edit Functionality
 
 
 // A function to delete an item based on its index in the array
@@ -117,7 +117,7 @@ function deleteItem(index) {
         document.getElementById('priceInput').value = '';
     }
 
-    // Array method .splice() removes items. (index to start at, how many to remove)
+    // An Array method which is .splice() to removes items. (index to start at, and how many to remove)
     inventory.splice(index, 1);
     
     // This Re-renders the Document Oject Model (DOM) so the deleted item disappears from the screen
